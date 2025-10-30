@@ -6,6 +6,7 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import FileResponse
 from pathlib import Path
 from data_cleaner import clean_csv
+from fastapi.responses import HTMLResponse
 
 app = FastAPI(title="Polars Data Cleaner")
 
@@ -17,6 +18,21 @@ CLEAN_DIR.mkdir(parents=True, exist_ok=True)
 @app.get("/")
 def root():
     return {"msg": "Polars Data Cleaner. POST a CSV to /upload to clean and download."}
+
+@app.get("/upload-form", response_class=HTMLResponse)
+def upload_form():
+    return """
+    <html>
+        <head><title>Upload CSV</title></head>
+        <body>
+            <h2>Upload a CSV File for Cleaning</h2>
+            <form action="/upload" enctype="multipart/form-data" method="post">
+                <input name="file" type="file" accept=".csv" required>
+                <input type="submit" value="Clean and Download">
+            </form>
+        </body>
+    </html>
+    """
 
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):
@@ -42,3 +58,4 @@ async def upload(file: UploadFile = File(...)):
 
     # return cleaned file as attachment
     return FileResponse(str(tmp_out), filename=out_name, media_type="text/csv")
+

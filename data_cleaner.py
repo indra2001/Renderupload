@@ -124,7 +124,7 @@ def clean_csv(input_path: str, output_path: str, sample_rows: int = SAMPLE_ROWS)
             # str.strptime may require format; we use a best-effort: try parse to datetime (may keep nulls)
             exprs.append(
                 pl.col(col)
-                  .str.strptime(pl.Datetime, fmt=None, strict=False)
+                  .str.strptime(pl.Datetime, format=None, strict=False)
                   .alias(col)
             )
         else:
@@ -153,3 +153,4 @@ if __name__ == "__main__":
         print("Usage: python data_cleaner.py input.csv output.csv")
     else:
         clean_csv(sys.argv[1], sys.argv[2])
+
